@@ -1,0 +1,49 @@
+data:
+  source: yfinance  # options: yfinance, synthetic
+  universe: [AAPL, MSFT, GOOGL, AMZN, META]
+  benchmark: ^GSPC  # or SPY
+  start_date: 2016-01-01
+  end_date: 2024-12-31
+  # If you have proprietary data, point to CSV/Parquet files here
+  # proprietary_prices_path: /absolute/path/to/prices.parquet
+
+features:
+  momentum_lookbacks: [5, 10, 21, 63]
+  volatility_window: 21
+  volume_zscore_window: 21
+
+labeling:
+  horizon_days: 1
+  excess_over: benchmark  # options: benchmark, risk_free
+
+model:
+  type: ridge  # options: ridge, random_forest
+  ridge_alpha: 1.0
+  random_forest:
+    n_estimators: 300
+    max_depth: 6
+    random_state: 42
+  walk_forward:
+    train_window_days: 504
+    test_window_days: 126
+    step_days: 126
+
+strategy:
+  long_short: true
+  gross_leverage: 1.0
+  max_position_per_asset: 0.05
+  positions_from: rank  # options: rank, linear
+  top_k: null  # if set, long/short top_k per side
+
+risk:
+  target_vol_annual: 0.15
+  vol_est_window_days: 63
+  max_drawdown: 0.2
+
+costs:
+  bps_per_trade: 5
+
+output:
+  artifacts_dir: artifacts
+  reports_dir: reports
+  save_intermediate: true

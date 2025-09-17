@@ -1,3 +1,45 @@
+## ML Trading Pipeline to Test Market Efficiency
+
+This project provides an end-to-end, reproducible pipeline to build and backtest a machine learning strategy that predicts next-day excess returns and trades under explicit risk limits. It is designed to help evaluate claims around the Efficient Market Hypothesis (EMH) by measuring whether learned signals produce statistically significant risk-adjusted performance after realistic costs.
+
+### Features
+- Data ingestion from public sources (Yahoo Finance) or synthetic generation
+- Daily factor engineering (momentum, volatility, liquidity proxies)
+- Labels for next-day excess returns over a benchmark
+- Walk-forward model training and out-of-sample predictions
+- Long-short, market-neutral portfolio construction
+- Risk management: target volatility and max drawdown guardrail
+- Backtesting with transaction costs and turnover tracking
+- Metrics report: Sharpe, Information Ratio, t-stats, drawdown, hit-rate
+- Single CLI to run the end-to-end pipeline
+
+### Install
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Quickstart (Public Data)
+
+```bash
+python main.py run --config configs/sample.yaml
+```
+
+If public data download fails (e.g., no internet), the pipeline will automatically fall back to a synthetic dataset with similar distributional properties for demonstration.
+
+### Configuration
+Edit `configs/sample.yaml` to set tickers, benchmark, date range, factor lookbacks, model, risk limits, and costs.
+
+### EMH Framing
+Under the EMH, all knowable information is already in prices; therefore, risk-adjusted alpha should not be systematically extractable. This project tests that notion by:
+- Training exclusively on past data with strict walk-forward splits
+- Enforcing no look-ahead by shifting features and labels appropriately
+- Charging transaction costs and constraining risk
+- Reporting out-of-sample performance with statistical significance
+
+Important: Past performance in backtests is not indicative of future results. This code is for research and educational purposes only.
+
 # Finance EMH
 
 Finance experts often caution against trying to time the market, claiming it's irresponsible and unlikely to succeed. However, with the advent of machine learning, is it now worth attempting to time the market?
